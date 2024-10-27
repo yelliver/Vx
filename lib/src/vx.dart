@@ -2,7 +2,7 @@ library vx;
 
 import 'package:flutter/widgets.dart';
 
-BuildContext? currentContext;
+BuildContext? _currentContext;
 
 class Vx<T> {
   Vx(this._value);
@@ -11,9 +11,8 @@ class Vx<T> {
   final Set<WeakReference<RxState>> _listeners = {};
 
   T get value {
-    if (currentContext != null) {
-      _listeners.add(
-          WeakReference((currentContext as StatefulElement).state as RxState));
+    if (_currentContext != null) {
+      _listeners.add(WeakReference((_currentContext as StatefulElement).state as RxState));
     }
     return _value;
   }
@@ -100,12 +99,12 @@ class BxState extends RxState<BxWidget> {
 abstract class RxState<T extends StatefulWidget> extends State<T> {
   @override
   Widget build(BuildContext context) {
-    final lastContext = currentContext;
-    currentContext = context;
+    final lastContext = _currentContext;
+    _currentContext = context;
     try {
       return buildInner(context);
     } finally {
-      currentContext = lastContext;
+      _currentContext = lastContext;
     }
   }
 
